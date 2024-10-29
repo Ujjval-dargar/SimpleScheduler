@@ -277,12 +277,13 @@ void printHistory()
 // SIGTERM signal handler
 void sigterm_handler(int signum)
 {
-    printHistory();
 
     while (!is_empty(&runningQueue) || !is_empty(&readyQueue)){
         execute();
         stopRunningProcesses();
     }
+
+    printHistory();
 
     exit(0);
 }
