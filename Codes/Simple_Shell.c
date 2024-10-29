@@ -206,6 +206,19 @@ bool checkbackground(const char *str)
     return str[strlen(str) - 1] == '&';
 }
 
+// check the presence of '|' in command
+bool checkPipe(const char *str)
+{
+    for (int i = 0; str[i] != '\0'; ++i)
+    {
+        if (str[i] == '|')
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 
 
 // remove trailing whitespaces from start and end of str
