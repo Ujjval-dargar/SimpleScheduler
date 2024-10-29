@@ -134,6 +134,34 @@ void sigint_handler(int sigsz)
     }
 }
 
+// handling signals
+void handle_signals()
+{
+    // handling SIGINT signal
+    struct sigaction sig1;
+    memset(&sig1, 0, sizeof(sig1));
+    sig1.sa_handler = sigint_handler;
+
+    if (sigaction(SIGINT, &sig1, NULL) != 0)
+    {
+        printf("Failed to handle signal.\n");
+        exit(0);
+    }
+
+    // handling SIGCHLD signal
+    struct sigaction sig2;
+    sig2.sa_handler = sigchld_handler;
+    sigemptyset(&sig2.sa_mask);
+    sig2.sa_flags = SA_RESTART | SA_NOCLDSTOP;
+
+    if (sigaction(SIGCHLD, &sig2, NULL) == -1)
+    {
+        printf("Failed to handle signal.\n");
+        exit(0);
+    }
+}
+
+
 
 // remove trailing whitespaces from start and end of str
 void strip(char *str)
