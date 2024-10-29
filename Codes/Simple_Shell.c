@@ -105,8 +105,7 @@ void addHistory(const char *str)
 // print history - command, pid, start-time and execution duration
 void printHistory()
 {
-    printf("\n\n%s\n", "-------------------------------------------------------------------------------------");
-    printf("%s\n", "                                       History                                           ");
+
 
     for (int i = 0; i < sz_history; ++i)
     {
@@ -140,6 +139,8 @@ void printHistory()
     }
 
     printf("%s\n", "-------------------------------------------------------------------------------------");
+    printf("\nReceived SIGINT (Ctrl+C). Exited\n\n");
+    printf("%s\n", "-------------------------------------------------------------------------------------");
 
 }
 
@@ -167,8 +168,6 @@ void sigint_handler(int sigsz)
 {
     if (sigsz == SIGINT)
     {
-        printHistory();
-
         if (kill(schedulerPID, SIGTERM) == -1)
         {
             printf("Failed to terminate scheduler\n");
@@ -176,6 +175,8 @@ void sigint_handler(int sigsz)
 
         int status;
         while (waitpid(schedulerPID, &status, WNOHANG) == 0){}
+
+        printHistory();
 
         exit(0);
     }
