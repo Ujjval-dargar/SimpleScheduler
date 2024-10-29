@@ -550,7 +550,6 @@ void sendToScheduler(int pid, char *str, int priority)
 }
 
 
-
 // execute and SIGSTOP & sending its pID to scheduler
 void queueExecution(char *str)
 {
@@ -591,6 +590,30 @@ void queueExecution(char *str)
         }
     }
 }
+
+
+void addCommand(char *str)
+{
+    commands[sz] = malloc(strlen(str) + 1);
+    if (commands[sz] == NULL)
+    {
+        printf("Failed to allocate memory.\n");
+        exit(0);
+    }
+    strcpy(commands[sz], str);
+    sz++;
+}
+
+void schedule()
+{
+    for (int i = 0; i < sz; ++i)
+    {
+        queueExecution(commands[i]);
+        free(commands[i]);
+    }
+    sz = 0;
+}
+
 
 
 int main(const int argc, char const *argv[])
