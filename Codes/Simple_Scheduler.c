@@ -152,7 +152,6 @@ void sleepTslice()
 
 
 
-
 // execute at most ncpu processes from ready queue
 void execute()
 {
@@ -316,5 +315,22 @@ void handle_signals()
 
 int main(int argc, char const *argv[])
 {
+    ncpu = atoi(argv[1]);
+    tslice = atoi(argv[2]);
+
+    handle_signals();
+
+    initializeQueue(&readyQueue);
+    initializeQueue(&runningQueue);
+    initializeQueue(&completedQueue);
+    initializeQueue(&failedQueue);
+
+    while (true)
+    {
+        receiveMessage();
+        execute();
+        stopRunningProcesses();
+    }
+
     return 0;
 }
