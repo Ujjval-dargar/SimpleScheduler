@@ -33,6 +33,7 @@ void addWaitTime()
     }
 }
 
+
 // stop all running processes
 void stopRunningProcesses()
 {
@@ -72,6 +73,7 @@ void stopRunningProcesses()
     // Reset runningQueue
     clear(&runningQueue);
 }
+
 
 // receiving message from shell
 void receiveMessage()
@@ -135,6 +137,7 @@ void receiveMessage()
     } while (c != -1);
 }
 
+
 // sleep scheduler for tslice milliseconds
 void sleepTslice()
 {
@@ -149,7 +152,6 @@ void sleepTslice()
         exit(0);
     }
 }
-
 
 
 // execute at most ncpu processes from ready queue
@@ -185,6 +187,7 @@ void execute()
     addWaitTime();
     sleepTslice();
 }
+
 
 void printHistory()
 {
@@ -270,6 +273,7 @@ void printHistory()
 
 }
 
+
 // SIGTERM signal handler
 void sigterm_handler(int signum)
 {
@@ -282,7 +286,6 @@ void sigterm_handler(int signum)
 
     exit(0);
 }
-
 
 // handle signals
 void handle_signals()
@@ -311,6 +314,7 @@ void handle_signals()
         exit(0);
     }
 }
+
 
 
 int main(int argc, char const *argv[])
