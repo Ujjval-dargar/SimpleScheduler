@@ -104,6 +104,16 @@ void addHistory(const char *str)
 }
 
 
+// show previous executed commands
+void showCommands()
+{
+    printf("\n");
+    for (int i = 0; i < sz_history; ++i)
+    {
+        printf("\t%d. %s\n", i + 1, history[i].command);
+    }
+}
+
 
 // Signal handler to handle SIGINT
 void sigint_handler(int sigsz)
