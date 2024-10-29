@@ -51,6 +51,60 @@ bool shd = false;
 char *pipeName = "/tmp/Simple_Scheduler_pipe";
 
 
+// add history - command, pid, start and end time
+void addHistory(const char *str)
+{
+    // stores last 100 previous command records
+    if (sz_history < 100)
+    {
+        // assigning
+        if (submit)
+        {
+            history[sz_history].pID = id;
+            history[sz_history].command = strdup(str);
+            history[sz_history].submit = true;
+        }
+        else if (shd)
+        {
+            history[sz_history].command = strdup(str);
+            history[sz_history].schedule = true;
+            history[sz_history].submit = false;
+        }
+        else
+        {
+            history[sz_history].command = strdup(str);
+            history[sz_history].start = sTime;
+            history[sz_history].end = eTime;
+            history[sz_history].pID = id;
+            history[sz_history].submit = false;
+        }
+
+        ++sz_history;
+    }
+    else if (sz_history == 100)
+    {
+        // shifting up to remove the oldest one making space for last run command
+        memmove(history, history + 1, (99 * sizeof(history[0])));
+
+        // assigning
+        if (submit)
+        {
+            history[99].command = strdup(str);
+            history[99].submit = true;
+        }
+        else
+        {
+            history[99].command = strdup(str);
+            history[99].start = sTime;
+            history[99].end = eTime;
+            history[99].pID = id;
+            history[99].submit = false;
+        }
+    }
+}
+
+
+
 // Signal handler to handle SIGINT
 void sigint_handler(int sigsz)
 {
