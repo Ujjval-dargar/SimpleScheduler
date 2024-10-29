@@ -93,6 +93,34 @@ bool input()
 }
 
 
+
+
+// sending message to scheduler
+void sendToScheduler(int pid, char *str, int priority)
+{
+    int fd = open(pipeName, O_WRONLY);
+    if (fd == -1)
+    {
+        printf("Failed to open pipe.\n");
+        exit(0);
+    }
+
+    struct message msg;
+    msg.pID = pid;
+    strncpy(msg.command, str, sizeof(msg.command) - 1);
+    msg.priority = priority;
+
+    msg.command[sizeof(msg.command) - 1] = '\0';
+
+    if (write(fd, &msg, sizeof(struct message)) == -1)
+    {
+        printf("Failed to write to pipe.\n");
+    };
+
+    close(fd);
+}
+
+
 int main(const int argc, char const *argv[])
 {
 
