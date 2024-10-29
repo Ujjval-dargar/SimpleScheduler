@@ -103,6 +103,47 @@ void addHistory(const char *str)
     }
 }
 
+// print history - command, pid, start-time and execution duration
+void printHistory()
+{
+    printf("\n\n%s\n", "-------------------------------------------------------------------------------------");
+    printf("%s\n", "                                       History                                           ");
+
+    for (int i = 0; i < sz_history; ++i)
+    {
+        if (!history[i].submit && !history[i].schedule)
+        {
+            printf("%s\n", "-------------------------------------------------------------------------------------");
+            char time_str[9]; // HH:MM:SS
+            struct tm *tm_info = localtime(&history[i].start.tv_sec);
+            strftime(time_str, sizeof(time_str), "%H:%M:%S", tm_info);
+
+            // calculating duration from start-time and end-time
+            double duration = (history[i].end.tv_sec - history[i].start.tv_sec) + (history[i].end.tv_usec - history[i].start.tv_usec) / 1000000.0;
+
+            printf("\n");
+            printf("\tP_ID : %d\n", history[i].pID);
+            printf("\tCommand : %s\n", history[i].command);
+            printf("\tStart time : %s\n", time_str);
+            printf("\tExecution Duration : %.6f second\n", duration);
+        }
+        else if (history[i].schedule)
+        {
+            printf("%s\n", "-------------------------------------------------------------------------------------");
+            char time_str[9]; // HH:MM:SS
+            struct tm *tm_info = localtime(&history[i].start.tv_sec);
+            strftime(time_str, sizeof(time_str), "%H:%M:%S", tm_info);
+
+            printf("\n");
+            printf("\tCommand : %s\n", history[i].command);
+            printf("\tStart time : %s\n", time_str);
+        }
+    }
+
+    printf("%s\n", "-------------------------------------------------------------------------------------");
+
+}
+
 
 // show previous executed commands
 void showCommands()
