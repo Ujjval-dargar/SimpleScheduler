@@ -509,6 +509,88 @@ void queueExecution(char *str)
 
 int main(const int argc, char const *argv[])
 {
+    // check arguments
+    if (argc != 3)
+    {
+        printf("NCPU and TSlICE are required.");
+        exit(0);
+    }
+
+    // converting to integers
+    ncpu = atoi(argv[1]);
+    tslice = atoi(argv[2]);
+
+    handle_signals();
+
+    clear();
+
+    create_pipe();
+
+    executeScheduler();
+
+    while (true)
+    {
+        getcwd(cwd, sizeof(cwd)); // get current working directory
+
+        printf("Shell > '%s' ~ ", cwd);
+
+        bool input_success = input();
+
+        if (!input_success)
+        {
+            continue;
+        }
+
+        checkTime(gettimeofday(&sTime, NULL)); // get starting time and also checking if retrieved successfully or not
+
+        if (strcmp(command, "history") == 0)
+        {
+            showCommands();
+        }
+        else if (strcmp(command, "exit") == 0)
+        {
+            printHistory();
+            exit(0);
+        }
+        else
+        {
+            if (checkPipe(command))
+            {
+                executePipe(command);
+            }
+            else
+            {
+                char **args = split(command, " ");
+
+                if (strcmp("submit", args[0]) == 0)
+                {
+                    submit = true;
+                    queueExecution(command);
+                }
+                else if (strcmp("add", args[0]) == 0)
+                {
+                    submit = true;
+                    addCommand(command);
+                }
+                else if (strcmp("schedule", command) == 0)
+                {
+                    shd = true;
+                    schedule();
+                }
+                else
+                {
+                    execute(command);
+                }
+            }
+        }
+
+        checkTime(gettimeofday(&eTime, NULL)); // get ending time and also checking if retrieved successfully or not
+
+        addHistory(command);
+
+        submit = false;
+    }
 
     return 0;
 }
+
