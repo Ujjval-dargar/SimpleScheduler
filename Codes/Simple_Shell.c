@@ -190,6 +190,16 @@ void checkAllocation(char **mem)
     }
 }
 
+// check 'gettimeofday' successfully retrieved time or not
+void checkTime(int status)
+{
+    if (status != 0)
+    {
+        printf("Failed to get time.\n");
+        exit(0);
+    }
+}
+
 
 // remove trailing whitespaces from start and end of str
 void strip(char *str)
