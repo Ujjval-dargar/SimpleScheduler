@@ -271,6 +271,19 @@ void printHistory()
 
 }
 
+// SIGTERM signal handler
+void sigterm_handler(int signum)
+{
+    printHistory();
+
+    while (!is_empty(&runningQueue) || !is_empty(&readyQueue)){
+        execute();
+        stopRunningProcesses();
+    }
+
+    exit(0);
+}
+
 
 // handle signals
 void handle_signals()
