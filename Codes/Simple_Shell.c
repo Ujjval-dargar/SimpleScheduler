@@ -51,6 +51,26 @@ bool shd = false;
 char *pipeName = "/tmp/Simple_Scheduler_pipe";
 
 
+// Signal handler to handle SIGINT
+void sigint_handler(int sigsz)
+{
+    if (sigsz == SIGINT)
+    {
+        printHistory();
+
+        if (kill(schedulerPID, SIGTERM) == -1)
+        {
+            printf("Failed to terminate scheduler\n");
+        }
+
+        int status;
+        while (waitpid(schedulerPID, &status, WNOHANG) == 0){}
+
+        exit(0);
+    }
+}
+
+
 // input and check if it's not empty
 bool input()
 {
