@@ -110,6 +110,34 @@ void execute()
     sleepTslice();
 }
 
+// handle signals
+void handle_signals()
+{
+    // handling SIGINT signal to be ignored
+    struct sigaction sig;
+    sig.sa_handler = SIG_IGN;
+    sigemptyset(&sig.sa_mask);
+    sig.sa_flags = 0;
+
+    if (sigaction(SIGINT, &sig, NULL) == -1)
+    {
+        printf("Failed to add SIGINT handler.\n");
+        exit(0);
+    }
+
+    // handling SIGTERM signal
+    struct sigaction sa;
+    sa.sa_handler = sigterm_handler;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = 0;
+
+    if (sigaction(SIGTERM, &sa, NULL) == -1)
+    {
+        printf("Failed to add SIGTERM handler.\n");
+        exit(0);
+    }
+}
+
 
 int main(int argc, char const *argv[])
 {
