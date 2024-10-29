@@ -180,6 +180,15 @@ void create_pipe()
     }
 }
 
+// check whether memory allocated successfully or not
+void checkAllocation(char **mem)
+{
+    if (mem == NULL)
+    {
+        printf("Failed to allocate memory\n");
+        exit(0);
+    }
+}
 
 
 // remove trailing whitespaces from start and end of str
