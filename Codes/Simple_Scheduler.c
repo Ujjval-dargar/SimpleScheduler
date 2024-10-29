@@ -73,6 +73,68 @@ void stopRunningProcesses()
     clear(&runningQueue);
 }
 
+// receiving message from shell
+void receiveMessage()
+{
+    int c;
+    do
+    {
+        c = -1;
+        const int fd = open(pipeName, O_RDONLY | O_NONBLOCK);
+
+        if (fd == -1)
+        {
+            printf("Failed to open pipe.\n");
+            exit(0);
+        }
+
+        struct pollfd pfd;
+        pfd.fd = fd;
+        pfd.events = POLLIN;
+
+        // checking if there is data to read or not
+        int result = poll(&pfd, 1, 1);
+
+        if (result == -1)
+        {
+            printf("Failed to poll.\n");
+            close(fd);
+            exit(0);
+        }
+        else if (pfd.revents & POLLIN)
+        {
+            struct message msg;
+
+            ssize_t bytes_read = read(fd, &msg, sizeof(struct message));
+
+            if (bytes_read > 0)
+            {
+                process p;
+
+                p.pID = msg.pID;
+                p.priority = msg.priority;
+                p.cycles = 0;
+                p.wait_time = 0;
+                strcpy(p.command, msg.command);
+
+                c = 0;
+
+                if (gettimeofday(&p.arrival_time, NULL) != 0)
+                {
+                    printf("Failed to get time.\n");
+                    exit(0);
+                }
+
+                // adding to ready queue
+                enqueue(&readyQueue, p);
+            }
+        }
+
+        close(fd);
+
+    } while (c != -1);
+}
+
 
 
 
