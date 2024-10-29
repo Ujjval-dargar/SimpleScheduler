@@ -114,6 +114,15 @@ void showCommands()
     }
 }
 
+// Signal handler to handle SIGCHLD
+void sigchld_handler(int sigNo)
+{
+    int status;
+
+    while (waitpid(-1, &status, WNOHANG) > 0){}
+
+}
+
 
 // Signal handler to handle SIGINT
 void sigint_handler(int sigsz)
