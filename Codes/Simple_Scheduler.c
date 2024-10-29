@@ -135,6 +135,21 @@ void receiveMessage()
     } while (c != -1);
 }
 
+// sleep scheduler for tslice milliseconds
+void sleepTslice()
+{
+    struct timespec slice;
+
+    slice.tv_sec = tslice / 1000;
+    slice.tv_nsec = (tslice % 1000) * 1000000;
+
+    if (nanosleep(&slice, NULL) == -1)
+    {
+        printf("Failed to sleep.\n");
+        exit(0);
+    }
+}
+
 
 
 
