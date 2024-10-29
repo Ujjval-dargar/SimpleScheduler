@@ -187,6 +187,91 @@ void execute()
     sleepTslice();
 }
 
+void printHistory()
+{
+    if (!is_empty(&failedQueue))
+    {
+        printf("\n\n%s\n", "-------------------------------------------------------------------------------------");
+        printf("%s\n", "                                   Failed Commands                                           ");
+    }
+
+    for (int i = failedQueue.front; i < failedQueue.rear; ++i)
+    {
+        printf("%s\n", "-------------------------------------------------------------------------------------");
+
+        process p = dequeue(&failedQueue);
+
+        char time_str[13];
+        struct tm *tm_info;
+
+        tm_info = localtime(&p.arrival_time.tv_sec);
+        strftime(time_str, sizeof(time_str), "%H:%M:%S", tm_info);
+        snprintf(time_str + 8, sizeof(time_str) - 8, ":%03ld", p.arrival_time.tv_usec / 1000);
+
+        printf("\n");
+        printf("\tP_ID : %d\n", p.pID);
+        printf("\tCommand : %s\n", p.command);
+        printf("\tArrival time : %s\n", time_str);
+        printf("\tExecution Cycles : %ld\n", p.cycles);
+    }
+
+    double avg_wait_time = 0;
+    double avg_exec_time = 0;
+    double cnt = 0;
+
+    if (!is_empty(&completedQueue))
+    {
+        printf("\n\n%s\n", "-------------------------------------------------------------------------------------");
+        printf("%s\n", "                                 Completely Executed Commands                                           ");
+    }
+
+    for (int i = completedQueue.front; i < completedQueue.rear; ++i)
+    {
+        process p = dequeue(&completedQueue);
+
+        cnt++;
+        printf("%s\n", "-------------------------------------------------------------------------------------");
+
+        char time_str[13];
+        struct tm *tm_info;
+
+        tm_info = localtime(&p.arrival_time.tv_sec);
+        strftime(time_str, sizeof(time_str), "%H:%M:%S", tm_info);
+        snprintf(time_str + 8, sizeof(time_str) - 8, ":%03ld", p.arrival_time.tv_usec / 1000);
+
+        printf("\n");
+        printf("\tP_ID : %d\n", p.pID);
+        printf("\tCommand : %s\n", p.command);
+        printf("\tArrival time : %s\n", time_str);
+        printf("\tWaiting time : %ld milliseconds\n", p.wait_time);
+
+        tm_info = localtime(&p.end_time.tv_sec);
+        strftime(time_str, sizeof(time_str), "%H:%M:%S", tm_info);
+        snprintf(time_str + 8, sizeof(time_str) - 8, ":%03ld", p.end_time.tv_usec / 1000);
+
+        long duration = p.cycles * tslice;
+
+        printf("\tCompletion time : %s\n", time_str);
+        printf("\tExecution Duration : %ld milliseconds\n", duration);
+        printf("\tExecution Cycles : %ld\n", p.cycles);
+
+        avg_wait_time += p.wait_time;
+        avg_exec_time += duration;
+    }
+
+    if (cnt != 0)
+    {
+        printf("%s\n", "-------------------------------------------------------------------------------------");
+        printf("\tAverage waiting time : %.6f second\n", avg_wait_time / cnt);
+        printf("\tAverage execution time : %.6f second\n", avg_exec_time / cnt);
+        printf("%s\n", "-------------------------------------------------------------------------------------");
+    }
+    printf("\nReceived SIGINT (Ctrl+C). Exited\n\n");
+    printf("%s\n", "-------------------------------------------------------------------------------------");
+
+}
+
+
 // handle signals
 void handle_signals()
 {
