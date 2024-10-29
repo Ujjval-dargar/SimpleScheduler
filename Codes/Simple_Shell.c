@@ -170,6 +170,16 @@ void handle_signals()
     }
 }
 
+// initialize a named pipe
+void create_pipe()
+{
+    if (mkfifo(pipeName, 0666) == -1 && errno != EEXIST)
+    {
+        printf("Failed to create FIFO.\n");
+        exit(0);
+    }
+}
+
 
 
 // remove trailing whitespaces from start and end of str
