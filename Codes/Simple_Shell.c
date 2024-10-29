@@ -70,6 +70,40 @@ void sigint_handler(int sigsz)
     }
 }
 
+// split str with delimiter char
+char **split(const char *str, const char *dem)
+{
+    // copy of str to prevent changes in original
+    char *copy = strdup(str);
+
+    char **arr = NULL;
+    char *ele = strtok(copy, dem); // each split element
+    int i = 0;
+
+    while (ele != NULL)
+    {
+        // reallocated and increase size for next element
+        char **temp = realloc(arr, sizeof(char *) * (i + 1));
+
+        checkAllocation(temp);
+
+        arr = temp;
+
+        arr[i] = strdup(ele);
+        i++;
+        ele = strtok(NULL, dem);
+    }
+
+    // NULL terminated string
+    char **temp = realloc(arr, sizeof(char *) * (i + 1));
+
+    checkAllocation(temp);
+
+    arr = temp;
+    arr[i] = NULL;
+
+    return arr;
+}
 
 // input and check if it's not empty
 bool input()
