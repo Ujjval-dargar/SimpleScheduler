@@ -152,6 +152,85 @@ void execute(const char *command)
 }
 
 
+// execute command with pipe
+void executePipe(const char *str)
+{
+    char **commands = split(str, "|");
+    int sz = 0;
+
+    while (commands[sz] != NULL) // calculating number of process
+    {
+        sz++;
+    }
+
+    int pipefds[2 * (sz - 1)]; // for storing pipes = 2 * number of '|'
+    for (int i = 0; i < sz - 1; i++)
+    {
+        if (pipe(pipefds + i * 2) == -1) // creating pipe and checking pipe created successfully or not
+        {
+            printf("Failed to create pipe.\n");
+            exit(0);
+        }
+    }
+
+    // creating child processes for each process
+    for (int i = 0; i < sz; i++)
+    {
+        int pid = fork();
+
+        if (pid < 0)
+        {
+            printf("Failed to fork child.\n");
+            exit(0);
+        }
+        else if (pid == 0) // child process
+        {
+            if (i > 0)
+            {
+                dup2(pipefds[(i - 1) * 2], STDIN_FILENO); // Redirecting stdin to pipe read end
+            }
+            if (i < sz - 1)
+            {
+                dup2(pipefds[i * 2 + 1], STDOUT_FILENO); // Redirect stdout to pipe write end
+            }
+
+            // closing pipes
+            for (int j = 0; j < 2 * (sz - 1); j++)
+            {
+                close(pipefds[j]);
+            }
+
+            strip(commands[i]);
+
+            char **args = split(commands[i], " ");
+
+            execvp(args[0], args);
+
+            printf("Failed to execute.\n");
+
+            exit(0);
+        }
+    }
+
+    // closing pipes in parent
+    for (int i = 0; i < 2 * (sz - 1); i++)
+    {
+        close(pipefds[i]);
+    }
+
+    // waiting for each child process
+    for (int i = 0; i < sz; i++)
+    {
+        int ret;
+        int pid = wait(&ret);
+
+        if (!WIFEXITED(ret)) // check terminated normally or not
+        {
+            printf("\nAbnormal termination with pid :%d\n", pid);
+        }
+    }
+}
+
 
 // sending message to scheduler
 void sendToScheduler(int pid, char *str, int priority)
