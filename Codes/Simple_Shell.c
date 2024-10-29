@@ -121,6 +121,49 @@ void sendToScheduler(int pid, char *str, int priority)
 }
 
 
+
+// execute and SIGSTOP & sending its pID to scheduler
+void queueExecution(char *str)
+{
+    char **args = split(str, " ");
+    args = args + 1;
+
+    int priority = 1;
+
+    int sz = 0;
+    while (args[sz] != NULL)
+    {
+        sz++;
+    }
+
+    if (sz == 2)
+    {
+        priority = atoi(args[1]);
+        args[1] = NULL;
+    }
+
+    int pid = fork();
+    if (pid < 0)
+    {
+        printf("Failed to fork child.\n");
+        exit(0);
+    }
+    else
+    {
+        if (pid == 0)
+        {
+            execvp(args[0], args);
+            printf("Failed to Execute.\n");
+            exit(0);
+        }
+        else
+        {
+            sendToScheduler(pid, str, priority);
+        }
+    }
+}
+
+
 int main(const int argc, char const *argv[])
 {
 
