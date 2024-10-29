@@ -94,6 +94,64 @@ bool input()
 
 
 
+// execute command without pipe
+void execute(const char *command)
+{
+    char *commandCopy = strdup(command);
+
+    strip(commandCopy);
+    bool background = checkbackground(commandCopy); // check for &
+    if (background)
+    {
+        commandCopy[strlen(commandCopy) - 1] = '\0'; // removing & if present
+    }
+    char **args = split(commandCopy, " ");
+
+    if (strcmp(args[0], "cd") == 0)
+    {
+        if (args[1] == NULL)
+        {
+            printf("Failed to cd.\n");
+        }
+        else if (chdir(args[1]) != 0)
+        {
+            printf("Failed to cd.\n");
+        }
+        return;
+    }
+
+    int pid = fork(); // forking a child
+    id = pid;
+
+    if (pid < 0)
+    {
+        printf("Failed to fork child.\n");
+        exit(0);
+    }
+    else if (pid == 0) // child process
+    {
+        execvp(args[0], args);
+        printf("Failed to execute.\n");
+        exit(0);
+    }
+    else
+    {
+        // parent process
+        if (!background) // if not background, parent will wait
+        {
+            int ret;
+            int pid = wait(&ret);
+
+            if (!WIFEXITED(ret)) // check terminated normally or not
+            {
+                printf("\nAbnormal termination with pid :%d\n", pid);
+            }
+        }
+        return;
+    }
+}
+
+
 
 // sending message to scheduler
 void sendToScheduler(int pid, char *str, int priority)
