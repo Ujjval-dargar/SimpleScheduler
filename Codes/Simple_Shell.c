@@ -219,6 +219,12 @@ bool checkPipe(const char *str)
     return false;
 }
 
+// clear the console
+void clear()
+{
+    system("clear");
+}
+
 
 
 // remove trailing whitespaces from start and end of str
