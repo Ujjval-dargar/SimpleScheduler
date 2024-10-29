@@ -123,7 +123,7 @@ We require `dummy_main.h` due to following reasons -
 - Termination and handling of the process can be managed by scheduler
 
 
-## GitHub Repository Link : [SimpleScheduler](https://github.com/Akshat-Sin/SimpleShell)
+## GitHub Repository Link : [SimpleScheduler](https://github.com/Ujjval-dargar/SimpleScheduler)
 
 
 ## Contribution
