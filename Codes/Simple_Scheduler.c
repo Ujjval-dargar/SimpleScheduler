@@ -24,6 +24,17 @@ Queue runningQueue;
 Queue completedQueue;
 Queue failedQueue;
 
+// add tslice to all processes in ready queue
+void addWaitTime()
+{
+    for (int i = readyQueue.front; i < readyQueue.rear; i++)
+    {
+        readyQueue.processes[i].wait_time += tslice;
+    }
+}
+
+
+
 // execute at most ncpu processes from ready queue
 void execute()
 {
