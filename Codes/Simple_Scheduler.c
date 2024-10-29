@@ -24,6 +24,40 @@ Queue runningQueue;
 Queue completedQueue;
 Queue failedQueue;
 
+// execute at most ncpu processes from ready queue
+void execute()
+{
+    sort(&readyQueue);
+
+    while (runningQueue.size != ncpu && !is_empty(&readyQueue))
+    {
+        process p = dequeue(&readyQueue);
+
+        // sending SIGCONT signal
+        int result = kill(p.pID, SIGCONT);
+
+        if (result == -1)
+        {
+            if (errno != ESRCH)
+            {
+                printf("Failed to send SIGCONT");
+            }
+
+            // adding process to failed queue from ready queue
+            enqueue(&failedQueue, p);
+        }
+        else
+        {
+            // adding process to running queue from ready queue
+            p.cycles++;
+            enqueue(&runningQueue, p);
+        }
+    }
+
+    addWaitTime();
+    sleepTslice();
+}
+
 
 int main(int argc, char const *argv[])
 {
