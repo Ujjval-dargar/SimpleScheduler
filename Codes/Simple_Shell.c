@@ -50,7 +50,6 @@ bool shd = false;
 
 char *pipeName = "/tmp/Simple_Scheduler_pipe";
 
-
 // add history - command, pid, start and end time
 void addHistory(const char *str)
 {
@@ -144,7 +143,6 @@ void printHistory()
 
 }
 
-
 // show previous executed commands
 void showCommands()
 {
@@ -163,7 +161,6 @@ void sigchld_handler(int sigNo)
     while (waitpid(-1, &status, WNOHANG) > 0){}
 
 }
-
 
 // Signal handler to handle SIGINT
 void sigint_handler(int sigsz)
@@ -210,6 +207,8 @@ void handle_signals()
         exit(0);
     }
 }
+
+
 
 // initialize a named pipe
 void create_pipe()
@@ -259,6 +258,8 @@ bool checkPipe(const char *str)
     }
     return false;
 }
+
+
 
 // clear the console
 void clear()
@@ -403,7 +404,6 @@ void execute(const char *command)
         return;
     }
 }
-
 
 // execute command with pipe
 void executePipe(const char *str)
@@ -702,4 +702,3 @@ int main(const int argc, char const *argv[])
 
     return 0;
 }
-
