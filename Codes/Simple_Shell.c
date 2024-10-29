@@ -70,6 +70,28 @@ void sigint_handler(int sigsz)
     }
 }
 
+
+// remove trailing whitespaces from start and end of str
+void strip(char *str)
+{
+    char *start = str;
+    char *end = str + strlen(str) - 1;
+
+    while (start < end && isspace(*start))
+    {
+        start++;
+    }
+
+    while (end > start && isspace(*end))
+    {
+        end--;
+    }
+
+    memmove(str, start, end - start + 1);
+
+    str[end - start + 1] = '\0';
+}
+
 // split str with delimiter char
 char **split(const char *str, const char *dem)
 {
