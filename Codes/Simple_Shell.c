@@ -200,6 +200,13 @@ void checkTime(int status)
     }
 }
 
+// check whether command is to be executed in background or not
+bool checkbackground(const char *str)
+{
+    return str[strlen(str) - 1] == '&';
+}
+
+
 
 // remove trailing whitespaces from start and end of str
 void strip(char *str)
