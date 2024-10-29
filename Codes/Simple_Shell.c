@@ -398,6 +398,45 @@ void executePipe(const char *str)
     }
 }
 
+// execute scheduler
+void executeScheduler()
+{
+    char *ncpu_str = malloc(sizeof(char) * 10);
+    char *tslice_str = malloc(sizeof(char) * 10);
+
+    if (ncpu_str == NULL || tslice_str == NULL)
+    {
+        printf("Failed to malloc.\n");
+        exit(0);
+    }
+
+    snprintf(ncpu_str, sizeof(char) * 10, "%d", ncpu);
+    snprintf(tslice_str, sizeof(char) * 10, "%d", tslice);
+
+    int pid = fork();
+    id = pid;
+
+    if (pid < 0)
+    {
+        printf("Failed to fork child.\n");
+        exit(0);
+    }
+    else if (pid == 0)
+    {
+        char *args[] = {"./Simple_Scheduler", ncpu_str, tslice_str, NULL};
+
+        execvp(args[0], args);
+
+        printf("Failed to run scheduler.\n");
+        exit(0);
+    }
+    else
+    {
+        schedulerPID = pid;
+    }
+}
+
+
 
 // sending message to scheduler
 void sendToScheduler(int pid, char *str, int priority)
