@@ -33,6 +33,47 @@ void addWaitTime()
     }
 }
 
+// stop all running processes
+void stopRunningProcesses()
+{
+    for (int i = runningQueue.front; i < runningQueue.rear; i++)
+    {
+        process p = dequeue(&runningQueue);
+
+        int pID = p.pID;
+
+        // sending SIGSTOP signal to running process
+        if (kill(pID, SIGSTOP) == -1)
+        {
+            if (errno == ESRCH)
+            {
+                if (gettimeofday(&p.end_time, NULL) != 0)
+                {
+                    printf("Failed to get time.\n");
+                    exit(0);
+                }
+
+                // adding to completed queue
+                enqueue(&completedQueue, p);
+            }
+            else
+            {
+                printf("Failed to stop process %d.\n", pID);
+                exit(0);
+            }
+        }
+        else
+        {
+            // adding to ready queue
+            enqueue(&readyQueue, p);
+        }
+    }
+
+    // Reset runningQueue
+    clear(&runningQueue);
+}
+
+
 
 
 // execute at most ncpu processes from ready queue
