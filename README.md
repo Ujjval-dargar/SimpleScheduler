@@ -38,7 +38,7 @@ Simple Scheduler is a lightweight process scheduler implemented in C that manage
 
 ## Implementation Details
 
-For an in-depth explanation of the project architecture, design choices, and code implementation, please refer to the [Implementation](IMPLEMENTATION.md) document.
+For an in-depth explanation of the project architecture, design choices, and code implementation, please refer to the [Implementation](implementation.md) document.
 
 ---
 
